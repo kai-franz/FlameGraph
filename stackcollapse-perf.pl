@@ -284,10 +284,12 @@ while (defined($_ = <>)) {
 		}
 		($m_pid, $m_tid, $m_period) = ($pid, $tid, $period);
 
-		# Normalize digits in the thread name (comm) to a single 0 so
-		# names like "prepare_1_worker" and "prepare_347_worker" collapse
-		# together as "prepare_0_worker".
-		$comm =~ s/\d+/0/g;
+		# Normalize digits in the thread name (comm) to a single 0 and then
+		# truncate at the first digit encountered so names like
+		# "prepare_1_worker" and "prepare_347_wor" both become "prepare_0".
+		if ($comm =~ /^(.*?)(\d)/) {
+			$comm = $1 . "0";
+		}
 
 		if ($include_tid) {
 			$pname = "$comm-$m_pid/$m_tid";
