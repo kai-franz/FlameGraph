@@ -73,6 +73,18 @@ foreach (<>) {
 		# trim leaf offset if these were retained:
 		$joined =~ s/\+[^+]*$// if $includeoffset;
 
+		# Normalize digits in the thread name (first frame) to a single 0
+		# so that threads like "prepare_1_worker" and "prepare_347_worker"
+		# collapse together as "prepare_0_worker".
+		if ($joined ne '') {
+			my ($head, $tail) = $joined =~ /^([^;]*)(;.*)?$/;
+			if (defined $head) {
+				my $norm_head = $head;
+				$norm_head =~ s/\d+/0/g;
+				$joined = defined $tail ? $norm_head . $tail : $norm_head;
+			}
+		}
+
 		remember_stack($joined, $count);
 		@stack = ();
 		next;
