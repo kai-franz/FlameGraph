@@ -74,7 +74,14 @@ foreach (<>) {
       @stack = ();
     } else {
       $_ =~ s/^\s+//;
-      push(@stack, $_);
+      my $label = $_;
+      # Normalize labels (likely thread names) that don't include +offset
+      if ($label !~ /\+/) {
+        if ($label =~ /^(.*?)(\d)/) {
+          $label = $1 . "0";
+        }
+      }
+      push(@stack, $label);
     }
   }
 }
