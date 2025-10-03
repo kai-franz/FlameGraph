@@ -54,34 +54,19 @@ foreach (<>) {
     if (/^@\[$/) {
       $in_stack = 1;
     } elsif (/^@\[,\s(.*)\]: (\d+)/) {
-      my $label = $1;
-      if ($label =~ /^(.*?)(\d)/) {
-        $label = $1 . "0";
-      }
-      print $label . " $2\n";
+      print $1 . " $2\n";
     }
   } else {
     if (m/^,?\s?(.*)\]: (\d+)/) {
       if (length $1) {
-        my $label = $1;
-        if ($label =~ /^(.*?)(\d)/) {
-          $label = $1 . "0";
-        }
-        push(@stack, $label);
+        push(@stack, $1);
       }
       print join(';', reverse(@stack)) . " $2\n";
       $in_stack = 0;
       @stack = ();
     } else {
       $_ =~ s/^\s+//;
-      my $label = $_;
-      # Normalize labels (likely thread names) that don't include +offset
-      if ($label !~ /\+/) {
-        if ($label =~ /^(.*?)(\d)/) {
-          $label = $1 . "0";
-        }
-      }
-      push(@stack, $label);
+      push(@stack, $_);
     }
   }
 }
