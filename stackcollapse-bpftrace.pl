@@ -59,7 +59,13 @@ foreach (<>) {
   } else {
     if (m/^,?\s?(.*)\]: (\d+)/) {
       if (length $1) {
-        push(@stack, $1);
+        my $label = $1;
+        # Truncate at the first digit in the label, replacing digits with a single 0
+        # e.g., TabletServer_57 -> TabletServer_0
+        if ($label =~ /^(.*?)(\d)/) {
+          $label = $1 . "0";
+        }
+        push(@stack, $label);
       }
       print join(';', reverse(@stack)) . " $2\n";
       $in_stack = 0;
