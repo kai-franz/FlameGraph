@@ -54,12 +54,20 @@ foreach (<>) {
     if (/^@\[$/) {
       $in_stack = 1;
     } elsif (/^@\[,\s(.*)\]: (\d+)/) {
-      print $1 . " $2\n";
+      my $label = $1;
+      if ($label =~ /^(.*?)(\d)/) {
+        $label = $1 . "0";
+      }
+      print $label . " $2\n";
     }
   } else {
     if (m/^,?\s?(.*)\]: (\d+)/) {
       if (length $1) {
-        push(@stack, $1);
+        my $label = $1;
+        if ($label =~ /^(.*?)(\d)/) {
+          $label = $1 . "0";
+        }
+        push(@stack, $label);
       }
       print join(';', reverse(@stack)) . " $2\n";
       $in_stack = 0;
